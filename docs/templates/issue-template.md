@@ -1,24 +1,40 @@
-# Issue Template (draft, to be refined from the model review)
+# Issue Templates
 
-Cadence: Monday, Wednesday, Friday 06:30. Target read time 4 to 5 minutes (~700 to
-900 words). Mobile-first, one column, 2 to 4 images max.
+Voice: a neighbour who knows everyone, not a newspaper. Battersea first. No party
+politics, no named-person crime. Every paid item labelled "Partner".
 
-1. **Kicker line** (one sentence, voice; weather/day hook)
-2. **Presenting partner** line (labelled)
-3. **The Big One** — lead story, 120 to 180 words, local civic or big opening/closing
-4. **Quick Hits** — 5 to 7 bullets, 20 to 35 words each, mixed civic/lifestyle:
-   planning, transport, schools, police/safety (per Pressekodex-style restraint),
-   openings/closings, sport, people
-5. **On the Common / Around the Junction** — one neighbourhood-level colour item
-6. **Partner item** (secondary, labelled)
-7. **What's On** — Mon: this week (6 to 8 picks); Wed: midweek + weekend preview;
-   Fri: weekend guide (8 to 10 picks). Each: name, when, where, price, one line.
-8. **New & Noted** — openings, closings, planning applications for shopfronts,
-   "coming soon" hoardings (reader photos)
-9. **Property Watch** (Friday) — notable listing/sale, estate-agent sponsor fit
-10. **Ask the Street / Reader mailbag** — one question, one answer or poll
-11. **Noticeboard** — classifieds, lost & found, volunteer calls (self-serve)
-12. **Sign-off** — personal line, referral ask, "forward to a neighbour"
+## The Common (main issue): Thursday 07:00, 900 to 1,200 words, 6 to 8 photos
 
-Member edition (paid): ad-free rendering, Friday long read (one 600 to 900 word
-feature), monthly members' drinks, member card discounts at partner businesses.
+1. **Masthead line** + "brought to you by [anchor]" (one line)
+2. **Opener** (two sentences, voice; weather or week hook)
+3. **The Lead** (300 to 400 words, one photo): one reported local story, alternating
+   civic and lifestyle week to week
+4. **Partner: sponsor of the week** (60 words, image, reader code)
+5. **In Brief** (5 to 7 bullets, 20 to 35 words, attributed links): planning,
+   transport, schools, parks, people, sport
+6. **Open & Shut** (3 to 5 items, photos): openings, closings, "coming soon"
+   hoardings, reader-spotted
+7. **The Weekend List** (8 to 10 dated items, one line each, link to calendar; two
+   may be paid "Spotlight" cards, labelled). Never list sold-out events
+8. **Partner item** (40 words, secondary)
+9. **Reader Corner**: poll, question, or reply of the week
+10. **Noticeboard**: classifieds, jobs, lost and found, volunteer calls (self-serve)
+11. **Property Watch** (fortnightly): one notable listing or sale, no agent puffery
+12. **Sign-off**: personal line, referral block with progress, "forward to a neighbour"
+
+## The Week Ahead (brief): Monday 07:00, 350 to 500 words, text-led
+
+1. Opener (one line)
+2. **Three things this week** (events, deadlines, closures)
+3. **Council & planning** (decisions due, meetings, consultations, with links)
+4. **Getting around** (TfL, roadworks, rail)
+5. **Dates** (school terms, bin changes, markets)
+6. **Partner line** (one, labelled)
+7. Sign-off + referral line
+
+## Where to Go (member edition): Saturday 08:00, from month 4
+
+1. One long read (600 to 900 words): a place, a person, a history
+2. Three honest picks (restaurant, pub, thing to do) with a verdict
+3. Member perks this month (Common Card partners, drinks date)
+4. Where this quarter's 10% went

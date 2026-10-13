@@ -28,9 +28,14 @@ Three reasons, each grounded in a comparable that exists today:
    roughly £7,000 a month from one town-sized list. Three such units is your
    £20,000 a month. Affluent SW London has far higher SME density and household
    wealth than Margate.
-3. **The best neighbourhoods are empty.** Battersea/Nine Elms, Clapham, Balham,
-   Fulham, Dulwich and Crouch End have no email-native independent newsletter at
-   all. Their local press is Newsquest's Wandsworth Times and the now print-dead
+3. **The best neighbourhoods are close to empty.** Correction after a second
+   research pass: the patch has a weekly beehiiv newsletter, SW Scoop, whose newest
+   indexed issue is about six months old and which gates issues behind a referral
+   (stalled, not entrenched); Battersea Nub News, a chain-run civic weekly; and
+   Battersea Beat, an Instagram page of ~93k followers with no email product (a
+   partner or acquisition target rather than a competitor). No independent,
+   consistent, personality-led email title covers Battersea, Clapham, Nine Elms or
+   Balham. Fulham, Dulwich and Crouch End likewise have no email-native independent. Their local press is Newsquest's Wandsworth Times and the now print-dead
    South London Press. Meanwhile every attractive UK city has either a funded
    independent already (Edinburgh Minute, Mill Media in six cities and now Leeds,
    Stray Ferret in Harrogate, Bristol24/7 and the Cable in Bristol) or a
