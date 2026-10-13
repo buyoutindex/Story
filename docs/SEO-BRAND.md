@@ -255,3 +255,23 @@ archive SEO; pressgazette.co.uk (Nextdoor publisher partnership); blog.nextdoor.
 
 Deliverability: bird.com and beehiiv.com (Gmail/Yahoo 2024 requirements);
 redsift.com; mailpro.com and suped.com (BIMI/VMC).
+
+---
+
+## 7. Update (13 Oct 2026): per-title naming, no umbrella brand
+
+Decision: each title takes the name best suited and available in its own
+neighbourhood (the Mill Media / 6AM City model). A neutral network brand sits on
+the company, media kit and sponsor portal later; it does not matter yet.
+`thecommon.co.uk` is registered and parked (Squarespace, unclaimed); `mycommon.co.uk`
+appears free but the "My" system is weaker as a masthead. Ranked launch options:
+
+| Rank | Title | Catchment | Why | Checks |
+|---|---|---|---|---|
+| 1 | **The Common** | Battersea, Clapham, Nine Elms, Balham (SW11/SW4/SW8/SW12) | Largest affluent pool, two BIDs, Nine Elms growth, literal shared landmark, only stalled/corporate/Instagram-only competition; no media title of this name found | thecommon.london, thecommonlondon.co.uk; @thecommon handles; enquire about the parked .co.uk |
+| 2 | **The Lordship** | East Dulwich, Dulwich Village, Herne Hill (SE22/SE21/SE24) | Family-affluent, strongest indie high street in south London, active forum culture, no email competitor; Lordship Lane is the spine; no publication of this name found | thelordship.co.uk/.london; @thelordship |
+| 3 | **The Clock Tower** | Crouch End, Hornsey, Highgate (N8/N6) | Village identity, affluence, zero newsletter competition, iconic landmark name; smaller population caps ceiling | theclocktower.london (generic word, expect .co.uk taken); @theclocktower |
+| 4 | **The Rise** | Battersea only (SW11), if Clapham is split off | Battersea Rise and Lavender Hill identity, satisfies Love Battersea sentiment, Nine Elms growth; narrower than option 1 | therise.london |
+| 5 | **The Green** or **The Reach** | Fulham, Parsons Green, Sands End (SW6) | Rich, weak incumbent (FulhamSW6 ~1k); names are weaker (Fulham Reach is a Berkeley development brand; Green is generic) | thegreensw6 / fulhamreach conflicts |
+
+Rejected for Balham: "Gateway" (Balham.com already uses "Gateway to the South").
