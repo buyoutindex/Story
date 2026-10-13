@@ -159,9 +159,13 @@ data residency throughout.
   way, but document it.
 - **Rendering**: MJML → HTML for issues; the same issue object renders the web
   archive page (with Impressum, Datenschutz, and "Anzeige" labels in the template).
-- **Hosting**: Hetzner (Falkenstein/Nuremberg/Helsinki) in Docker for lowest cost
-  and clean EU residency; or Vercel (Frankfurt region) + Fly.io (fra) if we prefer
-  managed.
+- **Hosting**: Railway, EU West region, the same platform the transaction-monitor
+  runs on: app service and worker service from one repo with continuous deploy from
+  `main`, Railway Postgres and Redis plugins (or a Postgres-backed queue to keep one
+  datastore), cron services for nightly ingest, Monday reports and list hygiene,
+  Metabase and Dub.co from Railway templates. Secrets live in Railway, as the TM
+  does. AWS is used for SES (eu-west-2 London) and R2-style backups only. UK GDPR
+  treats the EU as adequate, so EU-region hosting is fine for a UK list.
 - **Legal plumbing as code**: consent records with IP, timestamp, form version and
   text; export and deletion endpoints (Art. 15/17); cookie-free analytics on the
   web side (Plausible EU or self-hosted) to avoid consent banners; Impressum and
@@ -194,7 +198,7 @@ Target: one day.
 
 | Item | Monthly |
 |---|---|
-| Hosting (Hetzner: app + worker + Postgres + Redis) | €40 to €120 |
+| Hosting (Railway: app + worker + Postgres + Redis, EU West) | €20 to €60 |
 | Domains (.de/.at/.ch per city, amortised) | €1 to €2 per city |
 | Monitoring, misc SaaS | €0 to €50 |
 | SES dedicated IP (optional until ~100k sends/day) | €0 to €25 |
