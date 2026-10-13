@@ -406,6 +406,93 @@ Luzern.
 
 ---
 
+## 7b. Scope extension: vertical trade journals (UK and Ireland)
+
+The same platform (ingest, Claude triage and drafting, human approval, SES send,
+sponsor system, membership) runs a second product line: niche B2B newsletters for
+specific UK and Irish verticals. Different sources, different readers, far higher
+revenue per subscriber. Not a year-one build; scoped now so the platform's data
+model does not block it.
+
+**Why it fits.** Trade readers pay (£10 to £40 a month is normal for a weekly
+deal-flow or regulatory digest), B2B sponsors pay £50 to £120 CPM against £20 to
+£45 for local lifestyle, and the ingest is more structured than any neighbourhood
+feed. The editorial loop is identical: brief, draft, approve, send.
+
+**The data advantage: the transaction-monitor product (separate repo).** It
+already holds, in Postgres:
+
+- `universe.companies`: the full Companies House Basic Company Data snapshot
+  (every UK company: status, incorporation and dissolution dates, SIC codes,
+  postcode and generated postcode area, charges counts, accounts category,
+  previous names), refreshed monthly from R2. Incorporations and dissolutions by
+  sector and region fall straight out of it.
+- `events_out`: an append-only log of classified transactions (new, label changed,
+  state changed, published, removed) with a snapshot payload (company, status,
+  SIC codes, implied label, headline, parties, dates, publish state). Consumers
+  read forward from an offset in `events_out_consumers`.
+- A 15-bucket sector taxonomy (Agriculture & Resources through Wholesale & Retail)
+  mapped from SIC codes in the database, and an existing Monday 08:00 "Buyout
+  Index" weekly digest per followed bucket.
+
+**Integration contract (read-only, no changes to that repo from here).**
+
+1. The trade-journal pipeline is a new consumer of `events_out` with its own
+   offset row (for example `story-trade-journal`), reading published transaction
+   events for the buckets a title covers. At-least-once semantics as that table's
+   documentation specifies; we dedupe on `transaction_key`.
+2. Incorporation and dissolution counts and lists per sector, SIC code and
+   postcode area come from `universe.companies` via a read-only role or an export
+   endpoint. The monthly snapshot cadence means "new incorporations this month" is
+   the natural unit; weekly figures need the daily CH stream, which is that repo's
+   decision, not ours.
+3. Access is through an API or read replica owned by the transaction-monitor
+   repo. Any new grant, endpoint or consumer registration is written up as a task
+   in that repo's own queue (its CLAUDE.md forbids changes from outside its
+   process). This repo holds only the client and the schema it expects.
+4. The transaction-monitor's own digest is the data product; a trade journal is
+   the editorial layer on top (context, named parties, who advised, what it means
+   for the sector). Keep them distinct so the journal does not cannibalise the
+   paid data product and vice versa; cross-link each from the other.
+
+**Ireland.** CRO (Companies Registration Office) publishes open company data and
+a CORE API with incorporations, dissolutions, charges and filings; Iris Oifigiúil
+carries strike-off and liquidation notices. These are the Irish equivalents of
+the universe snapshot and would be a new ingest adapter in this repo, not a
+transaction-monitor change, unless that product chooses to add Ireland.
+
+**Niche selection method.** Score the 15 buckets, then sub-sectors within them,
+on: consolidation activity (events per month in `events_out`), B2B sponsor depth
+(lenders, brokers, lawyers, accountants, software vendors who sell to that
+sector), fragmented or dying trade press, professional readers who expense
+subscriptions, and regulatory churn. Likely first candidates are
+practice-consolidation verticals where deal flow is steady and advisers pay for
+reach: dental, veterinary, pharmacy, GP and care homes under Health & Care;
+accountancy, IFA and wealth, insurance brokers and law firms under Professional
+Services; MSPs under Software & IT; nurseries and children's services; estate
+agencies under Real Estate. The data decides, not the hunch.
+
+**Product shape per title.** Free weekly digest (deals, incorporations,
+dissolutions, appointments, regulatory items for the vertical) with two B2B sponsor
+slots; a Pro tier at £15 to £40 a month with the full list, filters, early access
+and an archive; sponsored reports and league tables (most active acquirers,
+advisers) as annual products. Cadence weekly, Tuesday 07:00, moving to twice weekly
+when deal volume supports it.
+
+**What this adds to the platform scope now.**
+
+- Tenant model: a title is a `title` with a `kind` (local | trade) rather than a
+  `city`; sources, taxonomy and sections are per title.
+- Ingest: a generic "events consumer" adapter (offset-based, idempotent) and a
+  "snapshot query" adapter, both pointed at the transaction-monitor's interfaces.
+- Drafting: a trade register in the style-guide loader (named parties, adviser
+  credits, no speculation beyond the filed evidence, the "nothing here is advice"
+  line the data product already uses).
+- Monetisation: CPM pricing alongside flat-rate, and a Pro tier with gated data
+  views, which the local titles do not need.
+- Legal: FCA financial-promotion rules if any title touches investment content;
+  keep to factual register reporting and label sponsor content.
+
 ## 8. Risks and honest caveats
 
 - **Voice is the product.** Generic drafts stall growth. Invest in style guides and
