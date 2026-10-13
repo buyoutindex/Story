@@ -1,6 +1,6 @@
 # Local Newsletter Network
 
-Platform for launching and operating AI-assisted local newsletters across many cities
+Platform for launching and operating AI-assisted local newsletters across many European cities (DACH first)
 from a single codebase: ingest → draft → approve → send, plus events calendar,
 business directory, sponsor portal, self-hosted SES mailer and sales pipeline.
 

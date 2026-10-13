@@ -1,326 +1,445 @@
-# Local Newsletter Network: Business and Build Plan
+# Local Newsletter Network (Europe): Business and Build Plan
 
-Status: proposal (October 2026). This repo is being repurposed from a toy project into
-the platform described here.
+Status: proposal v2 (October 2026), Europe-first. Supersedes the US-oriented v1.
+This repo is being repurposed into the platform described here.
 
 ---
 
-## 1. The thesis in one paragraph
+## 1. The thesis
 
 A local newsletter is a small media business with three assets: an owned audience
 (email list), a local-business graph (directory + events), and a sponsor pipeline.
-The Scottsdale Scoop example shows one person running 15k subscribers and 3 issues a
-week with six systems. Every one of those six systems is software plus a thin layer
-of human judgment. The judgment layer (voice, editorial approval, sponsor
-relationships) is what does *not* scale per city. The software layer scales to N
-cities at near-zero marginal cost. The business is therefore: build the platform
-once, then launch cities as cheaply and quickly as possible and let the platform
-carry the operating load.
+The Scottsdale Scoop example shows one person running 15k subscribers and three
+issues a week with six systems. Every one of those systems is software plus a thin
+layer of human judgment. The judgment layer (voice, editorial approval, sponsor
+relationships) does not scale per city. The software layer scales to N cities at
+near-zero marginal cost. So: build the platform once, launch cities cheaply, let the
+platform carry the operating load.
 
-The two things that kill this model are (a) paying per-subscriber SaaS fees that scale
-with the list, and (b) treating each city as a separate operation. Self-hosted sending
-on Amazon SES and a single multi-tenant codebase fix both.
+**Why Europe, and why now.** Three things make Europe a better market than the US
+for this model, and one thing makes it harder.
+
+- *Local press is consolidating, not yet dead.* In Germany almost half of all
+  Landkreise (46.75%) now have only one independent local daily, down from an
+  average of 2.26 titles per district in 1992 to 1.83 in 2023 (Wüstenradar study,
+  Hamburg Media School, Nov 2024). A BDZV analysis projected physical delivery gaps
+  in roughly 4,400 of 11,000 municipalities by 2025. That is exactly the "weak
+  incumbent, not a vacuum" condition in which a light, free, daily-ish email wins:
+  readers still want local news, the incumbent is paywalled, thin and slow.
+- *Europeans pay for local journalism.* Mill Media (UK) runs six city titles with
+  150k+ free subscribers, 10k+ paying members at roughly £8 to £9 a month, 20
+  journalists, profitable, and over 90% of revenue from subscriptions. London
+  Centric hit paying scale within months. That opens a second revenue line
+  (membership) that barely exists for US local newsletters.
+- *Almost no independent competition.* Nearly every German/Austrian/Swiss regional
+  paper has a morning newsletter, but it is a traffic funnel for the paper, not a
+  standalone product, and independents are rare and tiny (e.g. the LVZ's
+  neighbourhood letter "Heiterblick" at ~1,250 subscribers). The US has 6AM City,
+  Axios Local and hundreds of Scoop-style independents; DACH has almost none.
+- *The hard part:* law. GDPR, double opt-in, Impressum and press-law duties,
+  advertising labelling, VAT, e-invoicing, and the EU AI Act's transparency rules
+  (in force for our use case from 2 August 2026). None of it is a blocker; all of it
+  has to be built into the platform rather than bolted on per city.
+
+**Recommended geography.** Launch region: DACH (Germany, Austria, German-speaking
+Switzerland). One language covers ~100M people, ~80 German cities above 100k and
+~600 Mittelstädte at 20k to 100k, the richest ad market in Europe, and the
+consolidation data above. Second wave: UK (gaps around Mill Media), Netherlands,
+Nordics. Avoid France/Italy/Spain in year one (different ad-market structures,
+stronger regional-press lock-in, and more languages for the same build effort).
 
 ---
 
 ## 2. How it works: the operating loop for one city
 
-Per issue (3x per week):
+Per issue (3x per week, 06:00 local, German cities tend to read early):
 
-1. **Ingest** (automated, nightly): scrape/pull local news RSS, city press releases,
-   permit filings, restaurant openings (Google Places new businesses), venue
-   calendars, Eventbrite/Meetup, Reddit r/<city>, Instagram hashtags, Nextdoor
-   public posts, school district notices, local sports schedules.
-2. **Triage** (Claude, automated): dedupe, cluster into stories, score for local
-   interest, flag anything needing a human eye (legal, deaths, controversy).
-3. **Draft** (Claude, automated): produce a full issue draft in the city voice from
-   a structured brief. Sections: lead story, 5 quick hits, events this week,
-   new openings, sponsor slot(s), "ask the readers" prompt.
-4. **Edit and approve** (human, 15 to 30 minutes): the editor reads, tweaks, hits
-   approve. This is the only mandatory human step per issue.
-5. **Send** (automated): render MJML/HTML, personalise, send via SES at 06:00 local.
-6. **Measure** (automated): opens, clicks per link, sponsor click-throughs, bounces,
-   complaints, unsubscribes. Feed back into triage weights and sponsor reports.
+1. **Ingest** (automated, nightly). Sources in Europe are better structured than in
+   the US, which helps automation:
+   - Rathaus/Gemeinde press releases and Amtsblatt (RSS or scraped).
+   - Ratsinformationssystem (council agendas, minutes, decisions). Most German
+     councils run ALLRIS, SessionNet or Mandatos; these have a handful of standard
+     formats, so a few adapters cover hundreds of cities. Austria: Gemeinde sites +
+     RIS; Switzerland: Gemeindeversammlung agendas, cantonal Amtsblätter,
+     Abstimmungsvorlagen.
+   - Polizeipresseportal (presseportal.de/blaulicht): structured, per-district,
+     free. The single best daily feed in Germany.
+   - Handelsregister / Firmenbuch / Zefix for new business registrations (new
+     openings), Bauanträge/Bebauungspläne, Immobilien portals for new builds.
+   - Event sources: venue sites, Vereine, Volkshochschule, theatres, Stadtfest
+     calendars, Eventfrog/Eventbrite (CH/DE), local Facebook groups (public).
+   - Regional paper RSS (headlines only, link out; never copy).
+   - Reddit (r/<city>, growing in DE), Instagram location tags, Nebenan.de public
+     posts, Jodel for university towns.
+   - OSM + Google Places for the directory seed.
+2. **Triage** (Claude Haiku, automated): dedupe, cluster, score for local interest,
+   flag for human attention (deaths, crime with named persons, legal risk,
+   anything about minors, anything that could trigger a Gegendarstellung).
+3. **Draft** (Claude Opus, automated): a full issue in the city's voice and
+   language from a structured brief. Sections: Aufmacher, 5 Kurzmeldungen,
+   Termine der Woche, Neu in der Stadt (openings), sponsor slot(s), Leserfrage.
+   Austrian and Swiss cities get their own register (Swiss Standard German, no ß,
+   Austrian vocabulary) via the style guide, not a separate model.
+4. **Edit and approve** (human, 15 to 30 minutes). The only mandatory human step.
+   This also satisfies the editorial-responsibility test under the AI Act (below).
+5. **Send** (automated) via SES in eu-central-1.
+6. **Measure** (automated): opens, clicks, sponsor CTR, bounces, complaints,
+   unsubscribes, feeding back into triage weights and sponsor reports.
 
-Per week:
+Per week: Monday sponsor reports; outbound sequences to prospect businesses;
+membership nudges to the most engaged 10% of free readers.
 
-- **Sponsor reports** go out Monday automatically (impressions, clicks, CTR vs.
-  benchmark, renewal CTA).
-- **Outbound** sequences fire to prospect businesses; replies land in one inbox per
-  city; the CRM board updates from email events.
-
-Continuously:
-
-- **Events calendar** fills itself via organiser self-submission (with Claude
-  moderation and auto-formatting).
-- **Business directory** pages are generated for every local business (seeded from
-  Google Places/OSM, enriched over time), each a thin SEO page that links back to
-  the newsletter signup. This is the slow compounding free-acquisition channel.
-- **Growth loops**: referral program, Instagram cross-post of each issue's lead
-  story (auto-generated card image), partner swaps with nearby cities.
+Continuously: organiser-submitted events, directory pages compounding in Google,
+Instagram cross-posts of the lead story, referral programme, swaps with
+neighbouring cities.
 
 ---
 
 ## 3. The six systems as software modules
 
-| # | System (Scoop name) | What we build | Build effort |
-|---|---|---|---|
-| 1 | Scoop Desk | Ingest pipeline + Claude drafting with per-city style guide, editor UI with approve/send | 3 to 4 weeks |
-| 2 | Events calendar | Public calendar, organiser submission form, moderation queue, ICS/embed | 1 week |
-| 3 | Business directory | Programmatic SEO pages per business, claim-your-listing flow, categories, maps | 1 to 2 weeks |
-| 4 | Ad sales | Sponsor portal (creatives, mockups, stats), ad calendar/inventory, Stripe checkout, Monday auto-reports | 2 to 3 weeks |
-| 5 | Mailer | SES sending, list management, signup forms/API, bounce/complaint handling, archive, analytics (MailCheap-class features) | 2 weeks (or adopt MailCheap/Listmonk and integrate) |
-| 6 | Outbound HQ | Prospect scraping (Google Places → businesses with ad budgets), sequenced email outreach, pipeline board, reply detection | 2 weeks |
+| # | System | What we build | Europe-specific additions | Effort |
+|---|---|---|---|---|
+| 1 | Writing desk | Ingest pipeline, Claude triage and drafting, editor UI with approve/send | Council-system adapters (ALLRIS, SessionNet), Presseportal adapter, multi-language style guides, "always verify / never cover" lists per city | 4 to 5 weeks |
+| 2 | Events calendar | Public calendar, organiser submission, moderation queue, ICS/embed | Impressum-compliant organiser data, GDPR consent on submission | 1 week |
+| 3 | Business directory | Programmatic SEO pages per business, claim-your-listing, categories, maps | Seed from OSM + Handelsregister; removal/correction flow (GDPR Art. 16/17 for sole traders whose name is the business name) | 1 to 2 weeks |
+| 4 | Ad sales + membership | Sponsor portal (creatives, mockups, stats), ad calendar, Stripe checkout, Monday reports; paid membership tier | SEPA Direct Debit, invoices with VAT (DE 19%, AT 20%, CH 8.1%), reverse charge for EU B2B, XRechnung/ZUGFeRD e-invoices (mandatory outbound B2B in DE from 2027/2028), "Anzeige" labelling baked into templates; optional Steady integration for memberships | 3 weeks |
+| 5 | Mailer | SES sending, lists, signup forms/API, bounce/complaint handling, archive, analytics | Double opt-in with timestamped consent log (UWG §7 DE, TKG §174 AT, UWG Art. 3 CH), one-click unsubscribe, Certified Senders Alliance onboarding for GMX/WEB.DE/T-Online deliverability, EU-only data residency | 2 weeks (or Listmonk as base) |
+| 6 | Outbound HQ | Prospect scraping, sequenced email outreach, pipeline board, reply detection | B2B cold email is lawful under UWG §7(2) only with presumed interest; sequences must be short, relevant, with opt-out; prefer phone + LinkedIn + warm intros for DACH | 2 weeks |
 
-Total: roughly 10 to 14 weeks of focused build for a solid v1 of the whole platform,
-or about 6 weeks to a minimum viable "city in a box" (modules 1, 5 and a manual
-version of 4).
+Roughly 12 to 16 weeks for a solid v1 of all six, about 7 weeks for a minimum
+"city in a box" (modules 1, 5, a manual 4, and the legal baseline).
 
-### Build vs. adopt per module
+### Build vs. adopt
 
-- **Mailer**: do not write from scratch first. Options: MailCheap (MIT, Next.js, SES,
-  single-admin; small project, roughly 130 stars, so expect to fork and own it),
-  Listmonk (Go, mature, multi-list, SES-compatible, strong admin), or Keila. Listmonk
-  is the lowest-risk base for multi-city. Either way, SES does the sending.
-- **Directory and events**: build. These are mostly templated pages and forms and are
-  where the multi-city data model matters most.
-- **Drafting**: build. This is the moat and needs tight coupling to our data model.
-- **CRM**: build a thin board on our own DB. Do not pay for HubSpot per city.
-- **Payments**: Stripe. Sponsors pay by card or invoice; self-serve checkout for
-  smaller slots.
+- **Mailer base**: Listmonk (Go, mature, multi-list, SES-compatible, self-hosted,
+  strong admin) is the lowest-risk base for multi-city and is already common in
+  German self-hosting circles. MailCheap (MIT, Next.js, SES, single-admin, ~130
+  stars) is a lighter reference but small enough that we would be maintaining a
+  fork. Either way SES does the sending; we own consent logging and the archive.
+- **EU-sovereign alternative to SES** if a client, lawyer or Datenschutzbeauftragter
+  insists: Scaleway TEM (FR), Brevo (FR), Mailjet (Sinch, FR). SES in eu-central-1
+  with the AWS DPA, SCCs and a documented Transfer Impact Assessment is standard
+  practice and acceptable for a newsletter (email address + engagement data, no
+  special categories). The CLOUD Act critique is real but widely accepted for this
+  data class. Decide once, document it in the Verfahrensverzeichnis.
+- **Memberships**: Stripe Billing handles SEPA and card. Steady (Berlin) is the
+  known brand for journalism memberships in DACH and lowers trust friction for
+  readers; it costs 10% + payment fees. Start with Stripe, offer Steady if
+  conversion lags.
+- **Drafting, directory, events, CRM**: build.
 
 ---
 
-## 4. Recommended architecture (what goes in this repo)
+## 4. Architecture (what goes in this repo)
 
-Monorepo, single deployable app, multi-tenant by `city_id` from day one.
+Monorepo, single deployable app, multi-tenant by `city_id` from day one, EU
+data residency throughout.
 
 - **Framework**: Next.js (App Router) + TypeScript. Public site, editor UI, sponsor
-  portal and API all in one app. Per-city domains via middleware
-  (`scottsdale.example.com` or custom domains).
-- **Database**: Postgres (Supabase or Neon). Row-level `city_id` on every table.
-  Core tables: `cities, subscribers, issues, issue_sections, sources, items (raw
-  ingested), stories (clustered), events, businesses, sponsors, campaigns,
-  ad_slots, prospects, touches, sends, send_events`.
-- **Jobs/queues**: a worker process (BullMQ on Redis, or Inngest/Trigger.dev if we
-  want managed) for ingest, drafting, sending, reports, outreach sequences.
-- **Email sending**: Amazon SES via SESv2 API, SNS → webhook for bounces, complaints,
-  deliveries, opens, clicks. One configuration set per city, shared dedicated IP
-  pool once volume justifies it.
-- **LLM**: Anthropic API. `claude-opus-5-5` for drafting and the editorial judgment
-  calls (voice fidelity matters, this is the product); `claude-haiku-5-5` for
-  high-volume classification, dedupe and event normalisation. Prompt caching on the
-  per-city style guide and recent-issues context. Batch API for nightly triage
-  (50% discount, no latency requirement).
+  portal, member area and API in one app. Per-city domains via middleware
+  (`<stadt>.example.de` or `.at`/`.ch` custom domains).
+- **Database**: Postgres in Frankfurt (Supabase eu-central-1, Neon Frankfurt, or
+  Hetzner-hosted). `city_id` on every table. Core tables: `cities, subscribers,
+  consents, issues, issue_sections, sources, items, stories, events, businesses,
+  sponsors, campaigns, ad_slots, invoices, members, prospects, touches, sends,
+  send_events, audit_log`.
+- **Jobs**: worker process (BullMQ on Redis) for ingest, triage, drafting, sending,
+  reports, outreach. Managed alternative: Inngest/Trigger.dev (check EU hosting).
+- **Email**: Amazon SES v2 in eu-central-1. SNS → webhook for bounce, complaint,
+  delivery, open, click. One configuration set per city; shared dedicated IP pool
+  once volume justifies (~100k sends/day). DKIM, SPF, DMARC `p=quarantine` at
+  minimum. CSA certification application once reputation is clean.
+- **LLM**: Anthropic API. `claude-opus-5-5` for drafting and editorial judgment
+  (voice and local nuance are the product); `claude-haiku-5-5` for high-volume
+  classification, dedupe and event normalisation. Prompt caching on the per-city
+  style guide and recent issues; Batch API for the nightly triage run (50% off).
+  For EU processing, pin inference with the `inference_geo` request parameter or
+  route via Bedrock eu-central-1 / Vertex europe-west; sign the Anthropic DPA. The
+  LLM sees news items and drafts, not subscriber data, so this is low-risk either
+  way, but document it.
 - **Rendering**: MJML → HTML for issues; the same issue object renders the web
-  archive page.
-- **Hosting**: Vercel or Fly.io for the app, Fly/Railway for the worker, or a single
-  Hetzner VPS running everything in Docker if we want the lowest run-rate.
-- **Observability**: Sentry, plus our own send/engagement tables.
+  archive page (with Impressum, Datenschutz, and "Anzeige" labels in the template).
+- **Hosting**: Hetzner (Falkenstein/Nuremberg/Helsinki) in Docker for lowest cost
+  and clean EU residency; or Vercel (Frankfurt region) + Fly.io (fra) if we prefer
+  managed.
+- **Legal plumbing as code**: consent records with IP, timestamp, form version and
+  text; export and deletion endpoints (Art. 15/17); cookie-free analytics on the
+  web side (Plausible EU or self-hosted) to avoid consent banners; Impressum and
+  Datenschutzerklärung generated from the `cities/<slug>/legal.yaml`.
 
 Repo layout (target):
 
 ```
-apps/web            Next.js: public sites, editor, sponsor portal, API
-apps/worker         queues: ingest, draft, send, report, outreach
-packages/db         Prisma/Drizzle schema + migrations
-packages/email      MJML templates, SES client, event webhook handlers
-packages/ai         prompts, style-guide loader, drafting + triage functions
-packages/ingest     source adapters (RSS, Places, Eventbrite, Reddit, ...)
-cities/<slug>/      style guide, sources.yaml, branding, domain config
+apps/web            Next.js: public sites, editor, sponsor portal, member area, API
+apps/worker         queues: ingest, triage, draft, send, report, outreach
+packages/db         Drizzle schema + migrations (Postgres, EU)
+packages/email      MJML templates, SES client, SNS webhook handlers, consent log
+packages/ai         prompts, style-guide loader, drafting + triage, locale registers
+packages/ingest     adapters: ALLRIS, SessionNet, Presseportal, RSS, OSM, Handelsregister, ...
+packages/legal      Impressum/Datenschutz generators, invoice/VAT rules, AI Act notice
+packages/market-scan  city scoring model (section 7)
+cities/<slug>/      style guide, sources.yaml, branding, legal.yaml, domain config
 docs/               this plan, runbooks, media kit template
 ```
 
-Adding a city should be: create `cities/<slug>/` with a style guide, a sources list
-and branding, point a domain, seed the directory from Google Places, done.
+Adding a city should be: create `cities/<slug>/`, fill in style guide, sources,
+legal entity and branding, point a domain, seed the directory, send a test issue.
+Target: one day.
 
 ---
 
-## 5. Run-rate cost
+## 5. Run-rate cost (EUR)
 
 ### 5a. Platform fixed cost (shared across all cities)
 
 | Item | Monthly |
 |---|---|
-| Hosting (app + worker + Postgres + Redis), VPS or small managed tier | $40 to $150 |
-| Domains (one per city, amortised) | $1 to $2 per city |
-| Sentry/monitoring, misc SaaS | $0 to $50 |
-| SES dedicated IP (optional until ~100k sends/day) | $0 to $25 |
-| **Total platform** | **$50 to $250** |
+| Hosting (Hetzner: app + worker + Postgres + Redis) | €40 to €120 |
+| Domains (.de/.at/.ch per city, amortised) | €1 to €2 per city |
+| Monitoring, misc SaaS | €0 to €50 |
+| SES dedicated IP (optional until ~100k sends/day) | €0 to €25 |
+| Legal: Datenschutzerklärung/Impressum review, AV-Verträge (one-off, amortised) | €50 to €100 |
+| **Total platform** | **€100 to €300** |
 
-### 5b. Variable cost per city, by stage
+### 5b. Variable software cost per city, by stage
 
-Assumptions: 3 issues/week (13/month), one editor-hour per issue, drafting with Opus
-5.5 at roughly 40k cached input + 3k output tokens per issue plus triage with Haiku
-over ~500 items/night.
+Assumptions: 13 issues/month; Opus 5.5 drafting at ~40k cached input + 3k output
+tokens per issue; Haiku triage over ~500 items/night; SES at $0.10 per 1,000
+(use $0.16 if the reported 2026 "Essentials" tier applies to a new account).
 
-| | 2,000 subs (launch) | 15,000 subs (Scoop scale) | 50,000 subs (mature) |
+| | 2,000 subs (launch) | 15,000 subs | 50,000 subs |
 |---|---|---|---|
-| SES sending (13 issues × subs × $0.10/1k; use $0.16/1k if the reported 2026 "Essentials" plan applies) | $3 to $4 | $20 to $31 | $65 to $104 |
-| Claude: drafting + triage + sponsor reports + event moderation | $15 to $30 | $20 to $40 | $30 to $60 |
-| Data sources (Google Places API, Eventbrite, scraping proxies) | $10 to $40 | $20 to $60 | $40 to $100 |
-| Stripe fees (2.9% + 30c of sponsor revenue) | ~$15 | ~$300 | ~$1,000 |
-| **Software run-rate per city (ex Stripe)** | **~$30 to $75** | **~$60 to $130** | **~$135 to $265** |
+| SES sending | €3 to €4 | €18 to €30 | €60 to €100 |
+| Claude (drafting, triage, reports, moderation) | €15 to €30 | €20 to €40 | €30 to €60 |
+| Data sources (Places API, proxies; most DACH public sources are free) | €5 to €25 | €10 to €40 | €20 to €60 |
+| **Software run-rate per city** | **€25 to €60** | **€50 to €110** | **€110 to €220** |
+| Stripe/SEPA fees (~1.5% + €0.25 SEPA, 1.5% + €0.25 EU cards) | ~€10 | ~€150 to €250 | ~€600 |
 
-The only cost that genuinely scales is sending, and at $0.10 per 1,000 it is
-negligible. Compare: beehiiv at 15k subscribers is roughly $120 to $240/month per
-newsletter and climbs with the list. Across 20 cities that is $30k to $60k a year
-in SaaS fees versus a few hundred dollars on SES. This is the whole reason to
-self-host.
+Compare beehiiv at 15k subscribers: roughly €110 to €220 per month per newsletter,
+rising with the list; across 20 cities €25k to €50k a year versus a few hundred
+euros on SES. Self-hosting is the structural advantage.
 
 ### 5c. People cost (the real run-rate)
 
-- **Editor time** per city: ~1 hour per issue plus ~2 hours/week on sponsor and
-  community replies, so roughly 20 to 25 hours/month. Contractor at $25 to $40/hour
-  gives $500 to $1,000/month per city. This is the dominant cost.
-- **Sales**: automated outreach gets the meetings, but a human closes. Budget a
-  commission-only or part-time seller per 5 to 8 cities, or the founder for the
-  first 3 cities.
-- **Growth spend**: Meta/Instagram ads to local zip codes typically acquire a
-  newsletter subscriber for $1 to $3 in mid-size US metros. Launching to 5,000
-  subscribers costs roughly $5k to $15k, or $0 if we lean on directory SEO and
-  partner swaps and accept a 6 to 12 month ramp.
+- **Editor** per city: ~1 hour per issue + ~2 hours/week on replies and sponsors,
+  so 20 to 25 hours/month. Freelance local journalists in DACH bill €35 to €60/hour;
+  a Werkstudent or part-time editor costs less. Budget €800 to €1,400/month per
+  city. In the UK, £600 to £1,000. This is the dominant cost everywhere.
+- **Sales**: automation books meetings; a human closes. DACH Mittelstand buys on
+  trust and phone, less on cold email. One part-time seller per 4 to 6 cities, or
+  the founder for the first three.
+- **Growth spend**: Meta ads to local postcodes acquire a newsletter subscriber for
+  roughly €1.50 to €4 in German Mittelstädte (less competition than US metros, but
+  smaller addressable pools). Launching to 5,000 subscribers costs €7k to €20k
+  paid, or close to €0 over 6 to 12 months via directory SEO, Instagram, local
+  Facebook groups and Nebenan.de.
 
-### 5d. Unit economics per city at 15k subscribers
+### 5d. Unit economics per city at 15,000 subscribers (German Mittelstadt)
 
-- Inventory: 13 issues × 2 to 3 sponsor slots = 26 to 39 slots/month.
-- Local newsletter pricing is almost always flat-rate, not CPM. Realistic:
-  primary slot $300 to $800 per issue, secondary $150 to $400, at a 15k list with
-  40%+ opens. (Translates to roughly $25 to $60 CPM on sends, consistent with the
-  $30 to $100 range reported for 10k to 50k lists.)
-- At 60% sell-through: ~$8k to $15k/month revenue.
-- Costs: ~$1k editor, ~$150 software, ~$400 Stripe/sales commission. Contribution
-  margin roughly 80%+.
-- Add-ons that lift revenue without lifting cost: featured directory listings
-  ($50 to $150/month per business, self-serve), featured events ($25 to $75),
-  job board, sponsored Instagram posts, annual "best of" awards.
+- **Ads**: 13 issues × 2 to 3 slots = 26 to 39 slots/month. DACH local pricing is
+  flat-rate: primary slot €250 to €600 per issue, secondary €120 to €300 at a 15k
+  list with 40%+ opens (that is roughly €20 to €45 CPM on sends, in line with the
+  low end of reported newsletter CPM ranges, which is right for local). At 60%
+  sell-through: €5k to €11k/month.
+- **Membership**: Mill Media converts roughly 6 to 7% of its free list to paying.
+  A conservative 3% of 15k at €6/month = €2.7k/month; 6% = €5.4k. Offer: ad-light
+  edition, Friday long read, member events, "Frag die Redaktion".
+- **Add-ons**: featured directory listings (€40 to €120/month, self-serve),
+  featured events (€20 to €60), Stellenanzeigen (local job ads are a strong DACH
+  product; €99 to €249 per posting), annual "Beste der Stadt" awards with sponsor.
+- **Revenue**: €8k to €17k/month. **Costs**: ~€1.2k editor, ~€100 software, ~€400
+  payment fees and commission. Contribution margin above 80%.
 
-At 1,000 to 3,000 subscribers a city is roughly break-even on editor cost; above
-~5,000 it is profitable; above ~10,000 it funds the next launch.
+Break-even on editor cost sits around 2,500 to 4,000 subscribers (one or two
+sponsors plus a few hundred members). Above ~6,000 a city is clearly profitable;
+above ~10,000 it funds the next launch.
+
+### 5e. Legal and compliance cost (often forgotten)
+
+- Company and press-law setup: a GmbH/UG (DE), GmbH (AT/CH) or UK Ltd with a named
+  "Verantwortlicher im Sinne des Presserechts" (V.i.S.d.P.) per title, Impressum
+  per domain, Datenschutzerklärung, Verzeichnis von Verarbeitungstätigkeiten,
+  AV-Verträge with AWS, Anthropic, hosting, Stripe. One-off €2k to €5k with a
+  media lawyer, then marginal per city.
+- Datenschutzbeauftragter is only mandatory in Germany above 20 people regularly
+  processing personal data; not needed early.
+- Press liability insurance (Medienhaftpflicht): roughly €800 to €2,000/year for
+  the group. Worth having before the first Abmahnung.
+- EU AI Act, Art. 50(4): AI-generated text published to inform the public on
+  matters of public interest must be disclosed, *unless* it has undergone human
+  review and a natural or legal person holds editorial responsibility. Our
+  approve-before-send step and the V.i.S.d.P. meet that exemption. Keep the
+  approval audit log, and add a short transparency note in the Impressum anyway.
+  Image generation (if we ever auto-generate visuals) must be labelled.
+- Advertising: every paid placement labelled "Anzeige" (DE/AT) or "Werbung"/
+  "Publireportage" (CH); Schleichwerbung is actionable under UWG and the
+  Pressekodex. Health advertising (Heilmittelwerbegesetz) and alcohol/gambling
+  carry extra restrictions; build a category blocklist into the ad-slot model.
 
 ---
 
 ## 6. How to build and scale it professionally
 
-**Phase 0, weeks 1 to 2: foundations.** Monorepo, Postgres schema with `city_id`,
-auth, SES account warmed (sandbox exit, DKIM/SPF/DMARC, start with a shared IP),
-Listmonk or MailCheap evaluated and either integrated or replaced, first ingest
-adapters (RSS, Google Places, Eventbrite), signup form and double opt-in.
+**Phase 0, weeks 1 to 3: foundations + legal baseline.** Monorepo, Postgres (EU),
+auth, SES eu-central-1 out of sandbox, DKIM/SPF/DMARC, Listmonk evaluated or
+replaced, consent-logging double opt-in, Impressum/Datenschutz generators, first
+adapters (Presseportal, one council system, RSS, OSM), entity + V.i.S.d.P. + DPA set
+signed.
 
-**Phase 1, weeks 3 to 6: city in a box, launch city #1.** Drafting pipeline with
-style guide, editor approve/send UI, archive pages, events calendar with submission,
-directory pages seeded for the city, basic analytics. Launch with the founder as
-editor to learn the voice problem first-hand. Sell the first 3 sponsors by hand.
+**Phase 1, weeks 4 to 8: city in a box, launch city #1.** Drafting with style
+guide, editor approve/send UI, archive, events with submission, directory seeded,
+basic analytics. The founder is editor for city #1 to learn the voice problem
+first-hand. Sell the first three sponsors by phone and in person.
 
-**Phase 2, weeks 7 to 12: monetisation and sales automation.** Sponsor portal, ad
-calendar, Stripe, Monday reports, outbound prospecting and sequences, CRM board.
-Media kit auto-generated from live stats. Referral program.
+**Phase 2, weeks 9 to 14: monetisation and sales automation.** Sponsor portal,
+ad calendar, Stripe (SEPA + card + invoices with VAT), Monday reports, membership
+tier, outbound prospecting and pipeline, auto-generated media kit (Mediadaten PDF,
+the format DACH agencies expect), referral programme.
 
-**Phase 3, months 4 to 6: launch cities #2 to #5.** Prove the `cities/<slug>/`
-onboarding takes a day, not a month. Hire contract editors. Measure cost per
-subscriber, time to first sponsor, sell-through. Kill or merge cities that miss
-thresholds at 90 days.
+**Phase 3, months 4 to 7: cities #2 to #5 in the same region.** Prove one-day
+onboarding. Hire freelance editors. Track cost per subscriber, time to first
+sponsor, sell-through, member conversion. Kill or merge cities that miss 90-day
+thresholds. Cluster geographically (e.g. five towns around Munich) so one seller
+and one brand family can work them.
 
-**Phase 4, months 6 to 18: network.** 10 to 30 cities. Regional sponsors buying
-across cities (this is where 6AM City makes its money). Shared national ad
-inventory via newsletter ad networks for unsold slots. Possibly acquire existing
-small local newsletters and migrate them onto the platform (lists for $1 to $3 per
-engaged subscriber are common).
+**Phase 4, months 7 to 18: network.** 10 to 30 cities across DACH. Regional
+sponsors (Sparkassen/Volksbanken, Stadtwerke, car dealer groups, regional
+retailers, universities, Klinikverbünde) buying across clusters. National unsold
+inventory via EU newsletter ad networks. Acquire or absorb existing small
+independent letters. Then the second language: UK cities Mill Media has not taken
+(Leeds, Bristol, Edinburgh, Nottingham, Cardiff, Newcastle), then NL and the
+Nordics using the same codebase with a new locale register.
 
-**Operating discipline that makes it scale:**
+**Operating discipline:**
 
-- Every city has the same KPIs dashboard: subs, 30-day open rate, growth rate, CAC,
-  sell-through, revenue per issue, editor hours per issue.
-- Editors never touch infrastructure. They see a brief, a draft, an approve button,
-  and a sponsor inbox.
-- Deliverability is a shared service: one person owns SES reputation, list hygiene
-  (sunset unengaged after 90 days), complaint rates under 0.1%.
-- Legal baseline: CAN-SPAM (physical address, one-click unsubscribe), GDPR-style
-  consent records if ever outside the US, clear sponsored-content labelling,
-  directory data sourced from public listings with a claim/removal flow.
-- Editorial risk: Claude drafts, a human approves, every time. Never send unreviewed.
-  Keep a per-city "do not cover" and "always verify" list in the style guide.
+- One KPI dashboard per city: subs, 30-day open rate, growth, CAC, sell-through,
+  revenue per issue, member conversion, editor hours per issue.
+- Editors never touch infrastructure; they see a brief, a draft, an approve button,
+  a sponsor inbox and a member inbox.
+- Deliverability is a shared service: SES reputation, CSA status, list hygiene
+  (sunset after 90 days unengaged), complaints under 0.1%. German inboxes are
+  dominated by GMX/WEB.DE/T-Online, which are stricter than Gmail; CSA
+  certification matters more here than in the US.
+- Editorial risk: Claude drafts, a human approves, every time. Per-city "do not
+  cover" and "always verify" lists. Named-person crime stories follow Pressekodex
+  rules (no names, no identifying detail unless public figure).
+- Legal is code: consent, Impressum, labelling, invoicing and deletion are
+  platform features, not per-city chores.
 
 ---
 
-## 7. Identifying the commercially viable places
+## 7. Identifying the commercially viable places (Europe)
 
-Score candidate metros on a simple model, run it over all US places with 50k to
-500k population, and launch top-ranked first. The scraping and scoring is itself a
-small module in this repo (`packages/market-scan`).
+Build `packages/market-scan` to score every DACH municipality of 25k to 400k
+inhabitants, then UK/NL/Nordic towns with the same model and local data sources.
+
+**Data sources (all public):** Zensus 2022 and Regionalstatistik (DE), Statistik
+Austria, BFS (CH), ONS (UK), CBS (NL); GfK/NIQ Kaufkraftindex by Kreis and
+Gemeinde; IVW circulation and Wüstenradar one-paper districts; Handelsregister /
+Firmenbuch / Zefix business density; OSM POI counts; Destatis Wanderungssaldo
+(net migration) and Baugenehmigungen; subreddit and Facebook-group sizes;
+Google Trends for "<Stadt> news/veranstaltungen".
 
 **Demand side (readers):**
 
-- Population 60k to 400k in the core city, or a well-defined suburb cluster of a
-  bigger metro with its own identity (Scottsdale is exactly this: 240k, affluent,
-  distinct from Phoenix).
-- Household income above the national median (sponsor budgets follow it).
-- High share of 25 to 54 year-olds and recent in-migration (newcomers want local
-  orientation; fast-growing Sunbelt suburbs are ideal).
-- Weak or dying local newspaper (check for Gannett-owned, cut newsroom, paywall).
-  A local-news vacuum is the single best predictor.
-- Existing r/<city> subreddit with 20k+ members and an active local Facebook group
-  signals appetite for local information.
+- Population 40k to 300k, or a well-defined affluent commuter belt around a
+  Metropole with its own identity (the German Speckgürtel: Starnberg, Erding,
+  Freising, Dachau, Fürstenfeldbruck around Munich; Bad Homburg, Oberursel,
+  Hofheim around Frankfurt; Norderstedt, Ahrensburg, Pinneberg around Hamburg;
+  Potsdam, Falkensee around Berlin; Mödling, Klosterneuburg, Baden around Vienna;
+  Zug, Baden, Winterthur, Thun around Zurich/Bern).
+- Kaufkraft above the national index (ad budgets follow it; Swiss and Bavarian/
+  Baden-Württemberg towns lead).
+- Positive net migration, new-build activity (newcomers need orientation).
+- One-newspaper district (Wüstenradar) or a paper that has cut its local desk,
+  closed its Lokalredaktion or moved to a regional edition.
+- Community signal: active r/<Stadt>, large local Facebook groups, Nebenan.de
+  density, a Stadtfest/Weinfest culture with real event volume.
+- University towns (Erlangen, Tübingen, Konstanz, Regensburg, Jena, Innsbruck,
+  St. Gallen) for young readers and editor supply, but lower Kaufkraft.
 
 **Supply side (sponsors):**
 
-- Density of discretionary local businesses per capita: restaurants, bars, gyms,
-  med-spas, dentists, realtors, home services, boutiques, event venues. Pull from
-  Google Places; count businesses with 4.0+ rating and 100+ reviews within the
-  city boundary. Those are the ones with marketing budgets.
-- Real estate activity (realtors and mortgage brokers are the most reliable local
-  advertisers).
-- Tourism or seasonal population (events and hospitality inventory).
-- Competition: no established local newsletter with over ~5k subscribers (search
-  beehiiv/Substack directories, 6AM City's and Axios Local's city lists, "<city>
-  newsletter" on Instagram). Avoid Axios Local and 6AM City markets early; target
-  the gaps next to them.
+- Density of discretionary local businesses with marketing budgets: Gastronomie,
+  Fitness, Autohäuser, Immobilienmakler, Handwerk (Küchen, Bäder, Solar), Optiker,
+  Zahnärzte (restricted messaging), Hotels, Weingüter, Einzelhandel in the
+  Innenstadt, Stadtwerke, Sparkasse/Volksbank/Raiffeisen, local Krankenhaus.
+  Count businesses with 4.0+ rating and 50+ Google reviews inside the boundary.
+- Real estate activity (Makler and Bauträger are the most dependable local
+  advertisers in DACH too).
+- Tourism or second-home population (Bodensee, Alpenvorland, Nordsee/Ostsee,
+  Salzkammergut, Engadin).
+- Competition: no independent local newsletter above ~3k subscribers; the
+  regional paper's newsletter is a brand funnel, not a competitor. Check Substack,
+  Steady, beehiiv directories and "<Stadt> Newsletter" on Instagram.
 
 **Operational:**
 
-- Enough public event and news feed volume to fill 3 issues a week without
-  original reporting.
-- A credible local editor is hireable (university town, or a place with a freelance
-  writer pool).
-- English-dominant market for v1.
+- Enough feed volume (Presseportal, council system, events) for three issues a
+  week without original reporting.
+- A credible local editor is hireable (Journalistik programmes, Volontariat
+  alumni, retired Lokalredakteure after the latest paper merger).
+- Mobile-first, German-language; dialect only in headlines and tone.
 
-Scoring sketch: `score = 0.25*income_index + 0.20*growth_index + 0.20*business_density
-+ 0.15*news_vacuum + 0.10*community_signal - 0.10*competition`. Shortlist the top 50,
-then manually sanity check the top 10.
+Scoring sketch:
 
-Likely first-wave profile: affluent, fast-growing suburbs and mid-size cities in AZ,
-TX, FL, NC, TN, CO, UT, ID, GA with no 6AM City or Axios Local presence. Examples
-of the archetype (to be verified by the scan, not assumed): Chandler/Gilbert AZ,
-Frisco/McKinney TX, Boise ID, Fort Collins CO, Cary NC, Franklin TN, St. George UT,
-Naples FL, Alpharetta GA.
+```
+score = 0.25*kaufkraft_index
+      + 0.20*growth_index           (net migration + Baugenehmigungen)
+      + 0.20*business_density       (discretionary POIs per 1k inhabitants)
+      + 0.15*news_vacuum            (one-paper district, Lokalredaktion cuts)
+      + 0.10*community_signal       (subreddit, FB groups, Nebenan)
+      - 0.10*competition
+```
+
+Shortlist the top 50, sanity-check the top 10 by hand (visit, read the local
+paper for a week, call five businesses and ask what they spend on ads).
+
+**Likely first-wave archetype (to be verified by the scan, not assumed):**
+affluent, growing towns of 40k to 150k in the Munich, Frankfurt, Stuttgart,
+Hamburg and Zurich/Vienna commuter belts, plus standalone Mittelstädte with a
+single weakened paper: e.g. Starnberg, Erding, Freising, Rosenheim, Konstanz,
+Ravensburg, Reutlingen, Esslingen, Bad Homburg, Wiesbaden, Darmstadt, Lüneburg,
+Norderstedt, Potsdam, Erlangen, Regensburg, Ulm, Freiburg; Austria: Mödling,
+Baden, Wels, Dornbirn, Salzburg; Switzerland: Zug, Baden, Winterthur, Thun,
+Luzern.
 
 ---
 
 ## 8. Risks and honest caveats
 
-- **Voice is the product.** Readers open a local newsletter because it feels like a
-  person. If drafts read as generic, growth stalls. Budget real time on the style
-  guides and keep humans in the loop.
-- **Deliverability is unforgiving.** A bad list import or a spam spike on a shared
-  SES account hurts every city. Warm properly, use double opt-in, sunset the dead.
-- **Sales is the bottleneck, not software.** Automated outreach books meetings;
-  closing local sponsors is relationship work. The platform makes one seller
-  5x more productive, it does not remove them.
-- **Pricing data is secondary-sourced.** SES per-1,000 rate (reported $0.10 à la
-  carte vs. $0.16 on a new 2026 "Essentials" tier) and beehiiv tiers should be
-  checked against the vendors' own pages before the model is finalised.
-- **Scraping sources break.** Adapters need monitoring; treat them as disposable.
+- **Voice is the product.** Generic drafts stall growth. Invest in style guides and
+  keep humans in the loop; Austrian and Swiss readers notice German-German instantly.
+- **Deliverability is unforgiving**, and German inbox providers are stricter than
+  Gmail. Double opt-in, warm-up, list hygiene and CSA are not optional.
+- **Sales is the bottleneck, not software.** DACH Mittelstand buys on relationship;
+  automation makes one seller much more productive but does not replace them.
+- **Legal exposure is real but routine.** Abmahnungen over Impressum, labelling or
+  photo rights are a cottage industry in Germany. Template everything, insure, and
+  never use images without a licence (use own photos, city press photos with
+  credit, or licensed stock).
+- **Data points are secondary-sourced.** SES pricing ($0.10 à la carte vs. a
+  reported $0.16 2026 "Essentials" tier), beehiiv tiers, Mill Media figures, and
+  Wüstenradar/BDZV numbers should be checked against primary sources before the
+  model is finalised.
+- **Sovereignty pressure.** Some sponsors (Sparkassen, Stadtwerke, public bodies)
+  may ask about US cloud providers. Keep the EU-sovereign mailer and EU inference
+  options documented so the answer is a config change, not a rebuild.
 
 ---
 
 ## 9. Immediate next steps
 
-1. Pick the stack choices above (Next.js + Postgres + Listmonk-or-build mailer) or
-   propose alternatives.
-2. Name city #1. Ideally one of us already lives there or knows it; that shortcuts
-   the voice problem.
-3. Scaffold the monorepo in this repo: schema, SES send path, signup form, one
-   ingest adapter, one drafted issue end to end.
-4. Open an AWS account for SES, request production access, set up DKIM/DMARC on the
-   first domain, start warming with a small list.
-5. Build `packages/market-scan` and run it to produce the ranked city shortlist.
+1. Confirm DACH-first and the stack (Next.js + Postgres on Hetzner/Supabase EU +
+   Listmonk-or-build mailer + SES eu-central-1), or propose alternatives.
+2. Name city #1. Ideally one of us lives there or knows it; that shortcuts the
+   voice problem and the first three sponsor conversations.
+3. Scaffold the monorepo here: schema, consent-logging signup, SES send path,
+   Presseportal + one council adapter, one drafted issue end to end.
+4. Set up the AWS account in eu-central-1, request production SES access, DKIM/
+   DMARC on the first domain, start warming with a seed list. Sign the AWS and
+   Anthropic DPAs.
+5. Build `packages/market-scan` against Zensus/GfK/Wüstenradar/OSM and produce the
+   ranked DACH shortlist.
+6. Engage a media lawyer for the Impressum/Datenschutz/AV templates and the
+   V.i.S.d.P. structure (one-off).
