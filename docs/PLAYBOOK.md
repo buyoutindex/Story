@@ -221,27 +221,24 @@ Move to Monday/Wednesday/Friday when the list passes ~5k and Thursday inventory 
 sold out two weeks ahead. Scarcity sells slots; a third issue is added for demand,
 not for ambition. Test 07:00 against 06:30 and 17:30 on clicks in month two.
 
-**Channels, in priority order.**
+**Channels, in priority order** (revised: the operator is a cold-email specialist
+and will not run Instagram for now).
 
-1. **Email** is the product and the owned asset.
-2. **Instagram** (@thecommon handle family): one Reel a week (a walk-through of an
-   opening or a planning site with voiceover), daily Stories with link sticker, a
-   carousel of the Thursday "5 things" each week. Used for sponsor prospecting via
-   DMs to every new opening.
-3. **WhatsApp Channel**: mirror of the Thursday "5 things" and breaking openings.
-   No competitor has one; the 25-to-45 Battersea/Clapham demographic lives there.
-4. **Nextdoor** publisher programme once the domain has four weeks of output.
-5. **Reddit**: a weekly "what's on in SW London this weekend" thread in r/london
-   and the small borough subreddits, mod-safe format, no hard sell.
-6. **Facebook groups**: helpful replies and occasional relevant links only. Never
-   the main channel.
-7. **Battersea Beat partnership**: propose a monthly newsletter swap or co-branded
-   event; buy a Story from them at launch; keep the relationship warm for a later
-   acquisition conversation (93k followers, no email product).
-8. **Print as an event, not a product**: 10k to 20k free copies once or twice a
-   year around Clapham Common summer festivals or Battersea Park fireworks, stacked
-   at venues and door-dropped in SW11/SW4 (the Wimble's Championships play).
-9. **Threads and Bluesky**: auto-post, no effort.
+1. **Email** is the product and the owned asset. A referral block in every issue.
+2. **WhatsApp Channel**: mirror of the Thursday "5 things" and breaking openings.
+   No competitor has one; zero production cost.
+3. **Nextdoor** publisher programme once the domain has four weeks of output.
+4. **Reddit**: a weekly "what's on in SW London this weekend" thread, mod-safe.
+5. **Print as an event**: 10k to 20k free copies once or twice a year around
+   Clapham Common festivals or Battersea Park fireworks (the Wimble play).
+6. **Battersea Beat partnership**: buy a Story at launch, propose a monthly swap,
+   keep the acquisition conversation warm (93k followers, no email product).
+7. **Facebook groups**: helpful replies only.
+8. **Instagram**: secure @thecommon / @thecommonlondon handles; post nothing for
+   now. Revisit only as a sponsor-facing shop window if advertisers ask for it.
+   The evidence (Edinburgh Minute, Cheapskate, Mill, London Centric, Naptown) is
+   that growth comes from consistency, forwards, referrals, giveaways and physical
+   moments, not from organic social.
 
 ---
 
@@ -265,8 +262,9 @@ not for ambition. Test 07:00 against 06:30 and 17:30 on clicks in month two.
    auto-generated mockup of their ad inside a real issue, Claude personalises the
    first line from their website; (c) a final nudge with a first-slot discount.
    Expect 1 to 3% to book.
-4. **Instagram DMs to every new opening** the week we cover them (Scottsdale's first
-   advertiser). The coverage is the warm intro.
+4. **Email every new opening** the week we cover them, with the link to the item.
+   The coverage is the warm intro (Scottsdale did this by Instagram DM; email
+   works the same for incorporated businesses).
 5. **Phone and in person for sole traders** (cafés, trades) where cold email is not
    lawful. One afternoon a week walking Northcote Road, Lavender Hill, Clapham High
    Street, Abbeville Road, Bedford Hill with printed cards and the media kit.
@@ -349,7 +347,7 @@ title when demand justifies it.
 | No sponsor reporting | Automated Monday report and a live portal |
 | Cadence slips in small titles | AI-drafted, human-approved issues on a fixed slot, with a cover plan |
 | Civic or lifestyle, never both | The Wimble blend, in a patch with far more of both |
-| No WhatsApp, weak Instagram (Wimble 5.8k vs Battersea Beat 93k) | WhatsApp Channel, weekly Reel, partnership with Battersea Beat |
+| No WhatsApp channel anywhere | WhatsApp Channel from day one; partnership with Battersea Beat for social reach instead of building our own |
 | Voiceless incumbents (Neighbour Net) | A named editor who answers replies and walks the high streets |
 | Balham and Nine Elms uncovered | Named in the strapline, dedicated hub pages |
 | Battersea called "Clapham" | Battersea first, always |

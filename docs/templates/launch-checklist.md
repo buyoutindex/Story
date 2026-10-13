@@ -15,13 +15,13 @@
 
 ## T-4 weeks
 - [ ] 6 test issues drafted and sent to 30 friendly readers; measure opens/clicks; fix voice
-- [ ] Instagram: 20 posts banked (openings, maps, "did you know", polls); handle live
+- [ ] Instagram/TikTok/Threads handles secured (no posting); WhatsApp Channel created and linked from signup page
 - [ ] Events calendar seeded with 60+ events; organiser submission form live
 - [ ] Directory seeded (OSM + Places) for SW11/SW4/SW8/SW12: 1,000+ pages, noindex until enriched
 
 ## Launch week
 - [ ] Issue 1 Monday 06:30; press note to Press Gazette / HTFP / Behind Local News (they cover launches)
-- [ ] Posts in every relevant FB group and Nextdoor; printed cards to 40 cafés and estate agents
+- [ ] Nextdoor publisher application; Reddit weekend thread; printed cards to 40 cafés and estate agents; first cold-email sequence live to 300 incorporated prospects
 - [ ] Welcome sequence (3 emails): who we are, best-of, refer a neighbour
 
 ## Month 1 to 3
