@@ -6,6 +6,6 @@ business directory, sponsor portal, self-hosted SES mailer and sales pipeline.
 
 Start with [docs/MARKETS.md](docs/MARKETS.md) for the target-market research,
 [docs/PLAYBOOK.md](docs/PLAYBOOK.md) for the operating playbook, [docs/SEO-BRAND.md](docs/SEO-BRAND.md)
-for brand, domains and SEO, [docs/ANALYTICS.md](docs/ANALYTICS.md) for sponsor reporting, and
+for brand, domains and SEO, [docs/ANALYTICS.md](docs/ANALYTICS.md) for sponsor reporting, [docs/TIMETABLE.md](docs/TIMETABLE.md) for the sprint plan, and
 [docs/PLAN.md](docs/PLAN.md) for the business model, run-rate costs,
 architecture, scaling plan and market-selection method.
